@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<title>Blaster</title>
+		<script src = "p5.js"></script>
+	</head>
+
+	<body>
+
+		<p id = "score">Score: 0 Shots: 0 Accuracy: 0%</p>
+
+		<script>
+			alert("CONTROLS\nMOVE: left and right arrows\nSHOOT: space bar");
+
+			var ship;
+			var scl = 20;
+			var bullet;
+			var isShot = false;
+			var asteroid;
+			var asteroidSizes = [40, 60, 80, 100];
+			var asteroidRadius;
+			var score = 0;
+			var shotsFired = 0;
+			var accuracy = 0;
+
+			function setup(){
+				createCanvas(600, 400);
+				ship = new Ship();
+				asteroid = new Asteroid();
+			}
+
+			function draw(){
+				background(51);
+				ship.show();
+				asteroid.show();
+				if(keyIsDown(LEFT_ARROW)){
+					ship.move(-10);
+				}
+				if(keyIsDown(RIGHT_ARROW)){
+					ship.move(10);
+				}
+
+				if(isShot){
+					bullet.shoot(bullet.x);
+				}
+				if(isShot && bullet.hit(asteroid.x, asteroid.y)){
+					asteroid = new Asteroid()
+					asteroid.show();
+				}
+
+				document.getElementById("score").innerHTML = "Score: "+score+" Shots: "+shotsFired+" Accuracy: "+accuracy+"%";
+			}
+
+			function keyPressed(){
+				if(keyCode === 32){
+					shotsFired++;
+					bullet = new Bullet();
+					isShot = true;
+				}
+				else if(keyCode === LEFT_ARROW);
+				else if(keyCode === RIGHT_ARROW);
+				else{
+					alert("PAUSED");
+				}
+
+			}
+
+			function Ship(){
+				this.x = width/2;
+
+				this.show = function(){
+					fill(255);
+					rectMode(CENTER);
+					rect(this.x, height-scl, scl, scl);
+				}
+
+				this.move = function(dir){
+					this.x += dir;
+					this.x = constrain(this.x, scl, width-scl);
+				}
+				this.shoot = function(){
+					fill()
+				}
+			}
+
+			function Bullet(){
+				this.x = ship.x;
+				this.y = height-(scl*2);
+
+
+				this.shoot = function(bulletX){
+					fill(255, 0, 100);
+					rectMode(CENTER);
+					this.y -= 10;
+					rect(bulletX,this.y, scl/4, scl/2);
+					if(this.y < 0){
+						accuracy = floor((score/shotsFired)*100);
+						isShot = false;
+					}
+
+				this.hit = function(posX, posY){
+					var d = dist(this.x, this.y, posX, posY);
+					if(d < asteroidRadius/2){
+						score++;
+						accuracy = floor((score/shotsFired)*100);
+						isShot = false;
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+
+				}
+			}
+
+			function Asteroid(){
+				asteroidRadius = random(asteroidSizes);
+				this.x = random(width-asteroidRadius);
+				this.y = random(height-asteroidRadius);
+				
+
+				this.show = function(){
+					fill(255, 0, 200);
+					ellipseMode(CENTER);
+					ellipse(this.x, this.y, asteroidRadius, asteroidRadius);;
+				}
+			}
+		</script>
+
+	</body>
+
+</html>
